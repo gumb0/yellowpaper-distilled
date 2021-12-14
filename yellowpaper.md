@@ -182,7 +182,7 @@ Yellow Paper
       - increased through using the SSTORE instruction in order to reset contract storage to zero from some non-zero value
   - Execution
     - Intrinsic gas - the amount of gas this transaction requires to be paid prior to execution
-      - for input data/new contract init code G(txdatazero) for zero byte + G(txdatanonzero) for each next byte
+      - for input data/new contract init code G(txdatazero) for each zero byte + G(txdatanonzero) for each non-zero byte
       - + G(txcreate) for contract creation after Homestead
       - + G(transaction)
     - Up-front cost = gasPrice * gasLimit + transferValue
