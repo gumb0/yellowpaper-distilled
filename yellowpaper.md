@@ -529,5 +529,5 @@ Yellow Paper
   - #TODO not all clear, elliptic curve crypto is magic
 - Misc references
   - Graphical interpretation of YP https://i.redd.it/vko4yn9gqopx.png
-- https://github.com/gumb0/yellowpaper-outline
+- https://github.com/gumb0/yellowpaper-distilled
 
