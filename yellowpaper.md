@@ -172,7 +172,7 @@ Yellow Paper
     - Suicide set
       - set of accounts that will be discarded following the transaction's completion
     - Log series
-      - a series of archived and indexable `checkpoints' in VM code execution that allow for contract-calls to be easily tracked by onlookers external to the Ethereum world (such as decentralised application front-ends)
+      - a series of archived and indexable 'checkpoints' in VM code execution that allow for contract-calls to be easily tracked by onlookers external to the Ethereum world (such as decentralised application front-ends)
       - Append-only, not readable by contracts
       - ~10x cheaper  than storage
       - organized into Merkle trie which allows efficient light client access to event records
