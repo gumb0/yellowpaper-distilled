@@ -181,6 +181,14 @@ Yellow Paper
       - Empty ones are deleted at the end of transaction
     - Refund balance
       - increased through using the SSTORE instruction in order to reset contract storage to zero from some non-zero value
+  - Accessed lists // since Berlin
+    - The list of addreses accessed in transaction
+      - Initialized to having sender, receiver (or created contract) and all precompile addresses 
+    - The list of (address, storage key) pairs accessed in transaction
+      - Iinitialized to empty
+    - Similar to substate in that they are scoped to entire transaction execution
+    - Used to calculate gas cost of opcodes accessing the state (EXTCODESIZE, EXTCODECOPY, EXTCODEHASH, BALANCE, CALL, CALLCODE, DELEGATECALL, STATICCALL, SLOAD, SSTORE, SELFDESTRUCT): cold access cost if not yet accessed, warm access cost otherwise
+    - https://eips.ethereum.org/EIPS/eip-2929
   - Execution
     - Intrinsic gas - the amount of gas this transaction requires to be paid prior to execution
       - for input data/new contract init code G(txdatazero) for each zero byte + G(txdatanonzero) for each non-zero byte
