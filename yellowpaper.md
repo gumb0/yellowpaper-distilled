@@ -57,6 +57,12 @@ Yellow Paper
   - data
     - Only for message call
     - unlimited size byte array, specifying the input data for the message call
+  - accessList // since Berlin
+    - List of (address, list of storage key) pairs
+    - Can be empty
+    - List of storage keys for any address can be empty
+    - Non-unique addresses and keys are allowed, but charged multiple times
+	- https://eips.ethereum.org/EIPS/eip-2930
 - Block
   - Structure
     - Header
@@ -183,9 +189,9 @@ Yellow Paper
       - increased through using the SSTORE instruction in order to reset contract storage to zero from some non-zero value
   - Accessed lists // since Berlin
     - The list of addreses accessed in transaction
-      - Initialized to having sender, receiver (or created contract) and all precompile addresses 
+      - Initialized to having sender, receiver (or created contract) and all precompile addresses + all addresses from access list of the transaction
     - The list of (address, storage key) pairs accessed in transaction
-      - Iinitialized to empty
+      - Iinitialized to keys in access list of the transaction
     - Similar to substate in that they are scoped to entire transaction execution
     - Used to calculate gas cost of opcodes accessing the state (EXTCODESIZE, EXTCODECOPY, EXTCODEHASH, BALANCE, CALL, CALLCODE, DELEGATECALL, STATICCALL, SLOAD, SSTORE, SELFDESTRUCT): cold access cost if not yet accessed, warm access cost otherwise
     - https://eips.ethereum.org/EIPS/eip-2929
@@ -194,6 +200,7 @@ Yellow Paper
       - for input data/new contract init code G(txdatazero) for each zero byte + G(txdatanonzero) for each non-zero byte
       - + G(txcreate) for contract creation after Homestead
       - + G(transaction)
+      - + ACCESS_LIST_ADDRESS_COST * addresses_in_access_list + ACCESS_LIST_STORAGE_KEY_COST * storage_keys_in_access_list // since Berlin
     - Up-front cost = gasPrice * gasLimit + transferValue
     - Validity
       - Sender can be calculated from signature
