@@ -245,6 +245,7 @@ Yellow Paper
     - + G(transaction)
     - + ACCESS_LIST_ADDRESS_COST * addresses_in_access_list + ACCESS_LIST_STORAGE_KEY_COST * storage_keys_in_access_list // since Berlin
   - Up-front cost = gasPrice * gasLimit + transferValue
+    - for Type 2 transaction: transaction.gas_limit * transaction.max_fee_per_gas + transferValue // since London
   - Check for validity #transaction_validity
     - The transaction is well-formed RLP, with no additional trailing bytes
     - Signature is valid, sender can be calculated from signature
@@ -252,6 +253,11 @@ Yellow Paper
     - Transaction nonce = sender's current nonce
     - Intrinsic gas <= gasLimit
     - up-front cost <= sender balance
+    - user is willing to at least pay the base fee // since London
+      - transaction.max_fee_per_gas >= block.base_fee_per_gas
+    - transaction.max_fee_per_gas < 2**256 // since London
+    - transaction.max_priority_fee_per_gas < 2**256 // since London
+    - transaction.max_fee_per_gas >= transaction.max_priority_fee_per_gas // since London
   - Substate - info that is acted upon immediately following the transaction
     - Suicide set
       - set of accounts that will be discarded following the transaction's completion
