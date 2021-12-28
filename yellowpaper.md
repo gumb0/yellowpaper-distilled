@@ -85,6 +85,35 @@ Yellow Paper
     - signatureYParity, signatureR, signatureS
       - elliptic curve values corresponding to the signature
       - determine the sender
+  - Transaction Type 2 // since London
+    - chainId
+    - nonce
+      - number of transactions sent by the sender, 256 bit integer
+    - max_priority_fee_per_gas
+      - maximum fee per gas sender is willing to give to miners to incentivize them to include their transaction
+    - max_fee_per_gas
+      - maximum fee per gas sender is willing to pay total, which covers both the priority fee and the block’s network fee per gas (aka: base fee) 
+    - gasLimit
+      - maximum amount of gas that can be used in this transaction, 256 bit integer
+    - destination
+      - address of recipient for call, 160 bit binary
+      - empty for contract creation (RLP of empty byte series)
+    - amount
+      - value to be transferred to recipient or newly created account, 256 bit integer
+    - data
+      - Only for message call
+      - unlimited size byte array, specifying the input data for the message call
+    - access_list
+      - List of (address, list of storage key) pairs
+      - Can be empty
+      - List of storage keys for any address can be empty
+      - Non-unique addresses and keys are allowed, but charged multiple times
+      - https://eips.ethereum.org/EIPS/eip-2930
+    - signature_y_parity, signature_r, signature_s
+      - elliptic curve values corresponding to the signature
+      - determine the sender
+    - The transaction will always pay the base fee per gas of the block it was included in, and they will pay max_priority_fee_per_gas set in the transaction, as long as the combined amount of the two fees doesn’t exceed the transaction’s max_fee_per_gas.
+    - https://eips.ethereum.org/EIPS/eip-1559
 - Block
   - Structure
     - Header
@@ -134,6 +163,24 @@ Yellow Paper
       - nonce
         - 64 bit hash used as proof of work together with mixHash
         - nonce <= 2**256 / difficulty
+      - baseFeePerGas // since London #block_base_fee_per_gas
+        - adjusted up or down each block according to a formula which is a function of gas used in parent block and gas target (block gas limit divided by elasticity multiplier (2)) of parent block. 
+	        - parentGasTarget = parent.gasLimit / 2
+	        - if London fork block
+		        - baseFee = 1000000000
+		    - else if parent.gasUsed == parentGasTarget
+			    - baseFee = parent.baseFee
+			- else if parent.GasUsed > parentGasTarget
+				- gasUsedDelta = parent.gasUsed - parentGasTarget
+				- baseFeeDelta = max(parent.baseFee * gasUsedDelta / parentGasTarget // 8, 1)
+				- baseFee = parent.baseFee + baseFeeDelta
+			- else 
+				- gasUsedDelta = parentGasTarget - parent.gasUsed
+		        - baseFeeDelta = parent.baseFee * gasUsedDelta / parent.gasUsed / 8
+		        - - baseFee = parent.baseFee - baseFeeDelta
+        - The algorithm results in the base fee per gas increasing when blocks are above the gas target, and decreasing when blocks are below the gas target.
+        - The base fee per gas is burned
+        - https://eips.ethereum.org/EIPS/eip-1559
     - Transactions
       - RLP-encoded pairs of index and transaction
     - Transaction receipts
@@ -157,7 +204,8 @@ Yellow Paper
     - nonce & mixHash are correct https://workflowy.com/#/eafb927a7646
     - gasUsed <= gasLimit
     - gasLimit is correct https://workflowy.com/#/c3c11e8558df
-    - timestamp > parent timestamp
+    - baseFee is correct // since London #block_base_fee_per_gas
+	- timestamp > parent timestamp
     - number = parent number + 1
     - extra data is at most 32 bytes
   - Block finalization
@@ -394,6 +442,7 @@ Yellow Paper
         - third - count in bytes
         - fills dest with STOP opcode if out of bounds
       - GASPRICE - get gas price specified by the originating transaction
+        - get effective_gas_price = transaction.priority_fee_per_gas + block.base_fee_per_gas // since London
       - EXTCODESIZE - pop address (lowest 160 bits are read), push size of account's code
       - EXTCODECOPY - copy an account's code to memory
         - pops 4 values
