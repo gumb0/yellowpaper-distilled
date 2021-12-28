@@ -31,38 +31,60 @@ Yellow Paper
   - Empty account - no code, zero nonce, zero balance // since spurious dragon
   - Dead account - non-existent or empty // since spurious dragon
 - Transaction
-  - Can be of message call type or contract creation type
-  - nonce 
-    - number of transactions sent by the sender, 256 bit integer
-  - gasPrice
-    - number of wei paid for each unit of gas, 256 bit integer
-    - selected by transaction creator
-    - the higher the price the more likely transaction will be selected by the miner
-  - gasLimit
-    - maximum amount of gas that can be used in this transaction, 256 bit integer
-  - to
-    - address of recipient for call, 160 bit binary
-    - empty for contract creation (RLP of empty byte series)
-  - value
-    - to be transferred to recipient or newly created account, 256 bit integer
-  - v, r, s
-    - elliptic curve values corresponding to the signature
-    - 5 bit, 256 bit, 256 bit integers
-    - determine the sender
-  - init
-    - Only for contract creation
-    - unlimited size byte array with EVM-code for the new account initialization
-    - init code returns body of the contract (saved as it's code)
-    - init code itself is discarded after first run
-  - data
-    - Only for message call
-    - unlimited size byte array, specifying the input data for the message call
-  - accessList // since Berlin
-    - List of (address, list of storage key) pairs
-    - Can be empty
-    - List of storage keys for any address can be empty
-    - Non-unique addresses and keys are allowed, but charged multiple times
-	- https://eips.ethereum.org/EIPS/eip-2930
+  - Any transaction type is either message call or contract creation (defined by to field)  
+  - Legacy transaction // term defined in Berlin EIP-2718, before all transactions are legacy
+    - nonce 
+      - number of transactions sent by the sender, 256 bit integer
+    - gasPrice
+      - number of wei paid for each unit of gas, 256 bit integer
+      - selected by transaction creator
+      - the higher the price the more likely transaction will be selected by the miner
+    - gasLimit
+      - maximum amount of gas that can be used in this transaction, 256 bit integer
+    - to
+      - address of recipient for call, 160 bit binary
+      - empty for contract creation (RLP of empty byte series)
+    - value
+      - to be transferred to recipient or newly created account, 256 bit integer
+    - v, r, s
+      - elliptic curve values corresponding to the signature
+      - 5 bit, 256 bit, 256 bit integers
+      - determine the sender
+    - init
+      - Only for contract creation
+      - unlimited size byte array with EVM-code for the new account initialization
+      - init code returns body of the contract (saved as it's code)
+      - init code itself is discarded after first run
+    - data
+      - Only for message call
+      - unlimited size byte array, specifying the input data for the message call
+  - Transaction Type 1 // since Berlin
+    - chainId
+    - nonce
+      - number of transactions sent by the sender, 256 bit integer
+    - gasPrice
+      - number of wei paid for each unit of gas, 256 bit integer
+      - selected by transaction creator
+      - the higher the price the more likely transaction will be selected by the miner
+    - gasLimit
+      - maximum amount of gas that can be used in this transaction, 256 bit integer
+    - to
+      - address of recipient for call, 160 bit binary
+      - empty for contract creation (RLP of empty byte series)
+    - value
+      - to be transferred to recipient or newly created account, 256 bit integer
+    - data
+      - Only for message call
+      - unlimited size byte array, specifying the input data for the message call
+    - accessList
+      - List of (address, list of storage key) pairs
+      - Can be empty
+      - List of storage keys for any address can be empty
+      - Non-unique addresses and keys are allowed, but charged multiple times
+      - https://eips.ethereum.org/EIPS/eip-2930
+    - signatureYParity, signatureR, signatureS
+      - elliptic curve values corresponding to the signature
+      - determine the sender
 - Block
   - Structure
     - Header
