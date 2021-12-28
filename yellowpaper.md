@@ -239,12 +239,19 @@ Yellow Paper
     - mixHash = 0
     - nonce = KEC((42))
 - Transaction execution
-  - Check for validity
+  - Intrinsic gas - the amount of gas this transaction requires to be paid prior to execution
+    - for input data/new contract init code G(txdatazero) for each zero byte + G(txdatanonzero) for each non-zero byte
+    - + G(txcreate) for contract creation after Homestead
+    - + G(transaction)
+    - + ACCESS_LIST_ADDRESS_COST * addresses_in_access_list + ACCESS_LIST_STORAGE_KEY_COST * storage_keys_in_access_list // since Berlin
+  - Up-front cost = gasPrice * gasLimit + transferValue
+  - Check for validity #transaction_validity
     - The transaction is well-formed RLP, with no additional trailing bytes
-    - Signature is valid
-    - Nonce = sender's current nonce
-    - gasLimit >= the intrinsic gas, g0, used by the transaction (see below)
-    - sender balance contains at least the cost, v0, required in up-front payment (see below)
+    - Signature is valid, sender can be calculated from signature
+    - Sender exists    
+    - Transaction nonce = sender's current nonce
+    - Intrinsic gas <= gasLimit
+    - up-front cost <= sender balance
   - Substate - info that is acted upon immediately following the transaction
     - Suicide set
       - set of accounts that will be discarded following the transaction's completion
@@ -266,19 +273,9 @@ Yellow Paper
     - Used to calculate gas cost of opcodes accessing the state (EXTCODESIZE, EXTCODECOPY, EXTCODEHASH, BALANCE, CALL, CALLCODE, DELEGATECALL, STATICCALL, SLOAD, SSTORE, SELFDESTRUCT): cold access cost if not yet accessed, warm access cost otherwise
     - https://eips.ethereum.org/EIPS/eip-2929
   - Execution
-    - Intrinsic gas - the amount of gas this transaction requires to be paid prior to execution
-      - for input data/new contract init code G(txdatazero) for each zero byte + G(txdatanonzero) for each non-zero byte
-      - + G(txcreate) for contract creation after Homestead
-      - + G(transaction)
-      - + ACCESS_LIST_ADDRESS_COST * addresses_in_access_list + ACCESS_LIST_STORAGE_KEY_COST * storage_keys_in_access_list // since Berlin
-    - Up-front cost = gasPrice * gasLimit + transferValue
     - Validity
-      - Sender can be calculated from signature
-      - Sender exists
-      - Transaction nonce equals sender nonce
-      - Intrinsic gas <= gasLimit
-      - up-front cost <= sender balance
-      - gasLimit + gas used already in this block <= block gasLimit
+      - #transaction_validity
+      - Additionally: gasLimit + gas used already in this block <= block gasLimit
     - Execution
       - Increment nonce of sender
       - sender balance -= gasLimit * gasPrice
