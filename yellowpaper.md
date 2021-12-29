@@ -274,6 +274,7 @@ Yellow Paper
       - Empty ones are deleted at the end of transaction
     - Refund balance
       - increased through using the SSTORE instruction in order to reset contract storage to zero from some non-zero value
+      - increased through SELFDESTRUCT // till Berlin
   - Accessed lists // since Berlin
     - The list of addreses accessed in transaction
       - Initialized to having sender, receiver (or created contract) and all precompile addresses + all addresses from access list of the transaction
@@ -331,7 +332,9 @@ Yellow Paper
             - address = 8 - ECPAIR // since Byzantium
             - address = 9 - BLAKE2b // since Istanbul
     - Finalization
-      - Refuned gas = gasLeft + min(substate refundBalance, floor(gasUsed / 2))
+      - Refuned gas = gasLeft + min(substate refundBalance, floor(gasUsed / MAX_REFUND_QUOTIENT))
+        - MAX_REFUND_QUOTIENT = 2 // till Berlin
+        - MAX_REFUND_QUOTIENT = 5 // since London
       - Beneficiary (miner) reward
         - usedGas * transaction.gasPrice // till Berlin
         - usedGas * priority_fee_per_gas #priority_fee // since London
@@ -557,7 +560,7 @@ Yellow Paper
         - recipient is the same account as this, just the code is overwritten and context is almost identical (apart from gas and depth)
       - SUICIDE - halt the execution and register account for later deletion
         - pops account address to send remaining funds to
-        - Refund is given to account if it's not yet in suicide list
+        - Refund is given to account if it's not yet in suicide list // till Berlin
         - #TODO gas cost not clear
       - REVERT - stop execution and return error without consuming all remaining gas // Since Byzantium
       - STATICCALL - call with a guarantee that the state is not modified, read-only call // since Byzantium
