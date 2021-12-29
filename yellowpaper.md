@@ -479,6 +479,7 @@ Yellow Paper
       - GASLIMIT - get current block gas limit
       - CHAINID - get network's chainID // since Istanbul
       - SELFBALANCE - get balance of current account (cheaper than BALANCE) // since Istanbul
+      - BASEFEE - value of the base fee of the current block transaction is executing in // since London
     - Stack, memory, storage and flow
       - POP - pop item from stack
       - MLOAD - pop address, push 32 byte-word from memory
