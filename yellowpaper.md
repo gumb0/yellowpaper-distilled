@@ -244,8 +244,12 @@ Yellow Paper
     - + G(txcreate) for contract creation after Homestead
     - + G(transaction)
     - + ACCESS_LIST_ADDRESS_COST * addresses_in_access_list + ACCESS_LIST_STORAGE_KEY_COST * storage_keys_in_access_list // since Berlin
-  - Up-front cost = gasPrice * gasLimit + transferValue
-    - for Type 2 transaction: transaction.gas_limit * transaction.max_fee_per_gas + transferValue // since London
+  - Effective gas price #effective_gas_price
+    - Legacy and Type 1 transactions: effective_gas_price = transaction.gasPrice
+    - Type 2 transactions // since London
+      - priority_fee_per_gas = min(transaction.max_priority_fee_per_gas, transaction.max_fee_per_gas - block.base_fee_per_gas)
+      - effective_gas_price = priority_fee_per_gas + block.base_fee_per_gas
+  - Up-front cost = effectiveGasPrice * gasLimit + transferValue
   - Check for validity #transaction_validity
     - The transaction is well-formed RLP, with no additional trailing bytes
     - Signature is valid, sender can be calculated from signature
@@ -285,6 +289,7 @@ Yellow Paper
     - Execution
       - Increment nonce of sender
       - sender balance -= gasLimit * gasPrice
+        - fail if resulting balance < 0
       - gasLeft = gasLimit - intrinsicGas
       - This moment is called checkpoint state
       - Contract creation
@@ -445,7 +450,7 @@ Yellow Paper
         - third - count in bytes
         - fills dest with STOP opcode if out of bounds
       - GASPRICE - get gas price specified by the originating transaction
-        - get effective_gas_price = transaction.priority_fee_per_gas + block.base_fee_per_gas // since London
+        - #effective_gas_price // since London
       - EXTCODESIZE - pop address (lowest 160 bits are read), push size of account's code
       - EXTCODECOPY - copy an account's code to memory
         - pops 4 values
