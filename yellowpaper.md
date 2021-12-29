@@ -313,6 +313,7 @@ Yellow Paper
           - (that is, subtracted from gasLeft)
           - This can also run out of gas resulting in OOG
           - Before Homestead in case of OOG here account is still created, along with initialization side-effects and the value is transferred, but no contract code is deployed. gasLeft stays the same then.
+        - If code returned from initialization code starts with byte 0xEF creation aborts with failure // since London
         - Save code returned from initialization code as new contract's code
       - Message call
         - Transfer value from sender to recipent
