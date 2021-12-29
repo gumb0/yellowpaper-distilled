@@ -142,6 +142,7 @@ Yellow Paper
           - epsilon = floor(2**(floor(block number / 1e5) - 2))
             - Muir Glacier: instead of block_number use block_number - 9_000_000
             - London: instead of block_number use block_number - 9_700_000
+            - Arrow Glacier: instead of block_number use block_number - 10_700_000
           - difficulty = max(genesis difficulty, parent difficulty + x * c + epsilon)
         - This mechanism enforces a homeostasis in terms of the time between blocks; a smaller period between the last two blocks results in an increase in the difficulty level and thus additional computation required, lengthening the likely next period. Conversely, if the period is too large, the difficulty, and expected time to the next block, is reduced.
         - The expected time to find the nonce & mixHash is proportional to the difficulty
