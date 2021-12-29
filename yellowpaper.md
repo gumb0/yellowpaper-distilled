@@ -247,7 +247,7 @@ Yellow Paper
   - Effective gas price #effective_gas_price
     - Legacy and Type 1 transactions: effective_gas_price = transaction.gasPrice
     - Type 2 transactions // since London
-      - priority_fee_per_gas = min(transaction.max_priority_fee_per_gas, transaction.max_fee_per_gas - block.base_fee_per_gas)
+      - priority_fee_per_gas = min(transaction.max_priority_fee_per_gas, transaction.max_fee_per_gas - block.base_fee_per_gas) #priority_fee
       - effective_gas_price = priority_fee_per_gas + block.base_fee_per_gas
   - Up-front cost = effectiveGasPrice * gasLimit + transferValue
   - Check for validity #transaction_validity
@@ -332,7 +332,11 @@ Yellow Paper
             - address = 9 - BLAKE2b // since Istanbul
     - Finalization
       - Refuned gas = gasLeft + min(substate refundBalance, floor(gasUsed / 2))
-      - The used gas goes to block beneficiary (miner)
+      - Beneficiary (miner) reward
+        - usedGas * transaction.gasPrice // till Berlin
+        - usedGas * priority_fee_per_gas #priority_fee // since London
+          - miner only receives the priority fee
+          - note that the base fee is not given to anyone (it is burned) 
       - Delete all accounts that either appear in the suicide list or are touched and empty
 - EVM
   - stack-based architecture
